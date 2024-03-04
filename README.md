@@ -1,4 +1,1 @@
-# cypress-simple-ci-report
-
-Reference : https://github.com/wkrzywiec/cypress-simple-ci-report/tree/gh-pages) branch.
-
+Reference : https://github.com/rahul8436/Cypress-Report/tree/gh-pages) branch.

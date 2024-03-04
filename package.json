@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wkrzywiec/cypress-simple-ci-report.git"
+    "url": "https://github.com/rahul8436/Cypress-Report.git"
   },
-  "author": "Wojtek Krzywiec",
+  "author": "Rahul Kundu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/wkrzywiec/cypress-simple-ci-report/issues"
+    "url": "https://github.com/rahul8436/Cypress-Report/issues"
   },
-  "homepage": "https://github.com/wkrzywiec/cypress-simple-ci-report#readme"
+  "homepage": "https://github.com/rahul8436/Cypress-Report#readme"
 }
