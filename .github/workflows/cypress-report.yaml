@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'master'
-  # Add this part if you want to schedule test rerun
+  # Add this part if you want to schedule test rerun quickly
   schedule:
     - cron: '0 8 1-31 * *'
 
