@@ -15,7 +15,7 @@
     "test": "cypress run",
     "test:chrome": "cypress run --browser chrome",
     "report:merge": "mochawesome-merge cypress/results/json/*.json > index.json",
-    "report:generate": "marge index.json --reportDir public --assetsDir public/assets --reportPageTitle index.html"
+    "report:generate": "mkdir -p public/run-$(date +'%Y-%m-%d_%H-%M-%S') && marge index.json --reportDir public/run-$(date +'%Y-%m-%d_%H-%M-%S') --assetsDir public/run-$(date +'%Y-%m-%d_%H-%M-%S')/assets --reportPageTitle index.html"
   },
   "repository": {
     "type": "git",
