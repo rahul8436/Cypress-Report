@@ -27,7 +27,7 @@ jobs:
 
       - name: Copy test execution videos
         run: |
-          mkdir public
+          mkdir -p public
           cp -r cypress/videos public/videos
 
       - name: Merge test results into one
@@ -35,6 +35,20 @@ jobs:
 
       - name: Generate HTML report
         run: npm run report:generate
+
+      - name: Create unique directory for each run in gh-pages branch
+        run: |
+          unique_dir="public/run-$(date +'%Y%m%d_%H%M%S')_${{ github.run_number }}"
+          mkdir -p "$unique_dir"
+          mv public/* "$unique_dir"/
+          git checkout gh-pages
+          mkdir -p temp_public
+          mv ../public/* temp_public/ || true
+          mv temp_public/* .
+          rm -rf temp_public
+          git add .
+          git commit -m "Add report for run ${{ github.run_number }}"
+          git push
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
