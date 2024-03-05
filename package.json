@@ -14,9 +14,8 @@
   "scripts": {
     "test": "cypress run",
     "test:chrome": "cypress run --browser chrome",
-    "report:merge": "mochawesome-merge cypress/results/json/*.json > public/cypress_results/index.json",
-    "report:generate": "marge public/cypress_results/index.json --reportDir public/cypress_results --assetsDir public/cypress_results/assets --reportPageTitle index.html",
-    "posttest": "mkdir -p public/$(date +'%Y%m%d_%H%M%S') && mv cypress/results public/$(date +'%Y%m%d_%H%M%S')"
+    "report:merge": "mochawesome-merge cypress/results/json/*.json > index.json",
+    "report:generate": "marge index.json --reportDir public --assetsDir public/assets --reportPageTitle index.html"
   },
   "repository": {
     "type": "git",
