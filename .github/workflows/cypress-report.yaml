@@ -27,7 +27,7 @@ jobs:
 
       - name: Copy test execution videos
         run: |
-          mkdir public
+          mkdir -p public
           cp -r cypress/videos public/videos
 
       - name: Merge test results into one
@@ -36,14 +36,10 @@ jobs:
       - name: Generate HTML report
         run: npm run report:generate
 
-      - name: Get current datetime
-        id: datetime
-        run: echo "::set-output name=datetime::$(date +%Y%m%d%H%M%S)"
-
-      - name: Copy files to unique directory for each run
+      - name: Create unique directory for each run
         run: |
-          mkdir -p public/run-${{ steps.datetime.outputs.datetime }}
-          cp -r public/* public/run-${{ steps.datetime.outputs.datetime }}/ || :
+          mkdir -p "public/run-$(date +'%Y%m%d_%H%M%S')_${{ github.run_number }}"
+          mv public/* "public/run-$(date +'%Y%m%d_%H%M%S')_${{ github.run_number }}/"
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
