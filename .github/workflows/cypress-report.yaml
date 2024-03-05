@@ -36,10 +36,14 @@ jobs:
       - name: Generate HTML report
         run: npm run report:generate
 
+      - name: Get current datetime
+        id: datetime
+        run: echo "::set-output name=datetime::$(date +%Y%m%d%H%M%S)"
+
       - name: Copy files to unique directory for each run
         run: |
-          mkdir -p public/run-${{ github.run_id }}
-          cp -r public/* public/run-${{ github.run_id }}/ || :
+          mkdir -p public/run-${{ steps.datetime.outputs.datetime }}
+          cp -r public/* public/run-${{ steps.datetime.outputs.datetime }}/ || :
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
