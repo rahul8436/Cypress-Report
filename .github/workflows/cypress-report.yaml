@@ -12,19 +12,25 @@ jobs:
     name: Run on Chrome 81
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
 
-      - name: Install a project with a clean slate
-        run: |
-          yarn install
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn install
 
       - name: Run Cypress tests
+        env:
+          CYPRESS_COMMIT_HASH: ${{ github.sha }}
         run: npm run test:chrome
-        continue-on-error: true
 
       - name: Copy test execution videos
         run: |
-          mkdir public
+          mkdir -p public/videos
           cp -r cypress/videos public/videos
 
       - name: Merge test results into one
@@ -32,6 +38,16 @@ jobs:
 
       - name: Generate HTML report
         run: npm run report:generate
+        env:
+          CYPRESS_COMMIT_HASH: ${{ github.sha }}
+
+      - name: Create commit-specific directory
+        run: mkdir -p public/${{ github.sha }}
+
+      - name: Copy report files to commit-specific directory
+        run: |
+          cp -r public/* public/${{ github.sha }}
+          rm -rf public/${{ github.sha }}/version
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
