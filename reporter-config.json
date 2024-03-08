@@ -1,7 +1,7 @@
 {
     "reporterEnabled": "mochawesome",
     "mochawesomeReporterOptions": {
-        "reportDir": "cypress/results/json/${CYPRESS_COMMIT_HASH}",
+        "reportDir": "cypress/results/json",
         "overwrite": false,
         "html": false,
         "json": true
