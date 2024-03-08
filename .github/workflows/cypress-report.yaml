@@ -3,8 +3,9 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - 'v*' # Trigger on tags starting with 'v'
+  schedule:
+    - cron: '0 8 1-31 * *'
+  workflow_dispatch:
 
 jobs:
   cypress-e2e-chrome81:
@@ -32,14 +33,10 @@ jobs:
       - name: Generate HTML report
         run: npm run report:generate
 
-      - name: Get tag name
-        id: tag
-        run: echo "::set-output name=tag::$(echo ${GITHUB_REF#refs/tags/})"
-
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public/${{ steps.tag.outputs.tag }}
+          publish_dir: ./public
           user_name: 'Rahul Kundu'
           user_email: 'rahulkundu2016@gmail.com'
