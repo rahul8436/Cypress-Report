@@ -33,10 +33,31 @@ jobs:
       - name: Generate HTML report
         run: npm run report:generate
 
+      - name: Create unique artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-report-${{ github.run_id }}
+          path: public
+
+  deploy:
+    name: Deploy report page
+    runs-on: ubuntu-latest
+    needs: cypress-e2e-chrome81
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: cypress-report-${{ github.run_id }}
+          path: public
+
+      - name: Rename folder with unique run id
+        run: mv public run${{ github.run_id }}
+
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./run${{ github.run_id }}
           user_name: 'Rahul Kundu'
           user_email: 'rahulkundu2016@gmail.com'
+          publish_branch: gh-pages
