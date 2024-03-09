@@ -18,6 +18,9 @@ jobs:
         run: |
           yarn install
 
+      - name: Create public directory
+        run: mkdir public
+
       - name: Run Cypress tests
         run: npm run test:chrome
         continue-on-error: true
