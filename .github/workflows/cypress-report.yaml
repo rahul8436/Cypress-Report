@@ -18,21 +18,14 @@ jobs:
         run: |
           yarn install
 
-      - name: Create public directory
-        run: mkdir public
-
       - name: Run Cypress tests
         run: npm run test:chrome
         continue-on-error: true
 
-      - name: Create unique directory
-        id: create-dir
-        run: echo "::set-output name=dir_name::$(date +%Y-%m-%d-%H-%M-%S)"
-
       - name: Copy test execution videos
         run: |
-          mkdir public/${{ steps.create-dir.outputs.dir_name }}
-          cp -r cypress/videos public/${{ steps.create-dir.outputs.dir_name }}/videos
+          mkdir public
+          cp -r cypress/videos public/videos
 
       - name: Merge test results into one
         run: npm run report:merge
@@ -44,7 +37,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public/${{ steps.create-dir.outputs.dir_name }}
+          publish_dir: ./public
           user_name: 'Rahul Kundu'
           user_email: 'rahulkundu2016@gmail.com'
-          publish_branch: gh-pages
