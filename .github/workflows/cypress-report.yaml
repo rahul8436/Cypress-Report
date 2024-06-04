@@ -10,18 +10,22 @@ on:
 
 jobs:
   cypress-e2e-chrome81:
-    name: Run on Chrome 81
+    name: Test Automation
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn install
 
       - name: Run Cypress tests and generate report
-        run: npm run generate:report
-        continue-on-error: true
+        run: |
+          # Run Cypress tests and generate the report
+          npx cypress run --reporter mochawesome
+          # Create a new report directory based on current date/time
+          mkdir -p public/report$(date +%s)
 
       - name: Set up Git
         run: |
@@ -31,17 +35,17 @@ jobs:
       - name: Fetch existing gh-pages branch
         run: |
           git fetch origin gh-pages:gh-pages
+          git checkout gh-pages
 
-      - name: Copy reports to gh-pages
+      - name: Copy new report to gh-pages
         run: |
-          mkdir -p gh-pages
-          cp -r public/all-reports/* gh-pages/
-          cp -r gh-pages/* public/all-reports/
+          # Find the latest report directory
+          latest_report=$(ls -td public/report* | head -n 1)
+          # Copy the latest report directory to gh-pages
+          cp -r $latest_report gh-pages/
 
-      - name: Deploy report page
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public/all-reports
-          user_name: 'Rahul Kundu'
-          user_email: 'rahulkundu2016@gmail.com'
+      - name: Push updates to gh-pages
+        run: |
+          git add .
+          git commit -m "Add latest report"
+          git push origin gh-pages
