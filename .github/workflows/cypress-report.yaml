@@ -37,12 +37,16 @@ jobs:
           git fetch origin gh-pages:gh-pages
           git checkout gh-pages || true
 
+      - name: Clean up existing report directory
+        run: |
+          rm -rf gh-pages/*
+
       - name: Copy new report to gh-pages
         run: |
           # Find the latest report directory
           latest_report=$(ls -td public/report* | head -n 1)
           # Copy the latest report directory to gh-pages
-          cp -r $latest_report gh-pages/ || true
+          cp -r $latest_report/* gh-pages/ || true
 
       - name: Push updates to gh-pages
         run: |
