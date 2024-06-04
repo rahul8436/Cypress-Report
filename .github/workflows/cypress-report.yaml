@@ -20,15 +20,24 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run Cypress tests and generate report
+      - name: Run Cypress tests
+        run: npm run test:chrome
+        continue-on-error: true
+
+      - name: Copy test execution videos
         run: |
-          # Run Cypress tests and generate the report
-          npx cypress run --reporter mochawesome || true
-          # Create a new report directory based on current date/time
-          report_dir="report-$(date +%Y-%m-%d-%H-%M-%S)"
-          mkdir -p $report_dir
-          # Move the report files to the new directory
-          mv cypress/results/mochawesome-report/* $report_dir/ || true
+          mkdir ${{ github.run_id }}
+          cp -r cypress/videos ${{ github.run_id }}/videos
+        continue-on-error: true
+
+      - name: Merge test results into one
+        run: npm run report:merge
+        continue-on-error: true
+
+      # Manually write the report:generate step with run_id
+      - name: Generate HTML report
+        run: marge index.json --reportDir ${{ github.run_id }} --assetsDir ${{ github.run_id }}/assets --reportPageTitle index.html
+        continue-on-error: true
 
       - name: Set up Git
         run: |
@@ -38,7 +47,7 @@ jobs:
       - name: Fetch existing gh-pages branch
         run: |
           git fetch origin gh-pages:gh-pages
-          git checkout gh-pages || true
+          git checkout gh-pages || git checkout -b gh-pages
 
       - name: Clean up existing report directory
         run: |
@@ -47,12 +56,12 @@ jobs:
       - name: Copy new report to gh-pages
         run: |
           # Find the latest report directory
-          latest_report=$(ls -td report-* | head -n 1)
+          latest_report=$(ls -td ${{ github.run_id }} | head -n 1)
           # Copy the latest report directory to gh-pages
-          cp -r $latest_report/* . || true
+          cp -r $latest_report/* .
 
-      - name: Push updates to gh-pages
+      - name: Commit changes
         run: |
           git add .
-          git commit -m "Add latest report" || true
+          git commit -m "Add report for run ${{ github.run_id }}" || true
           git push origin gh-pages || true
