@@ -25,7 +25,10 @@ jobs:
           # Run Cypress tests and generate the report
           npx cypress run --reporter mochawesome || true
           # Create a new report directory based on current date/time
-          mkdir -p public/report$(date +%s)
+          report_dir="report-$(date +%Y-%m-%d-%H-%M-%S)"
+          mkdir -p $report_dir
+          # Move the report files to the new directory
+          mv cypress/results/mochawesome-report/* $report_dir/ || true
 
       - name: Set up Git
         run: |
@@ -39,14 +42,14 @@ jobs:
 
       - name: Clean up existing report directory
         run: |
-          rm -rf gh-pages/*
+          rm -rf *
 
       - name: Copy new report to gh-pages
         run: |
           # Find the latest report directory
-          latest_report=$(ls -td public/report* | head -n 1)
+          latest_report=$(ls -td report-* | head -n 1)
           # Copy the latest report directory to gh-pages
-          cp -r $latest_report/* gh-pages/ || true
+          cp -r $latest_report/* . || true
 
       - name: Push updates to gh-pages
         run: |
