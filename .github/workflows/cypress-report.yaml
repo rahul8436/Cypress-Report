@@ -49,9 +49,9 @@ jobs:
           git fetch origin gh-pages:gh-pages
           git checkout gh-pages || git checkout -b gh-pages
 
-      # - name: Copy new report to gh-pages
-      #   run: |
-      #     cp -r ${{ github.run_id }}/* .
+      - name: Copy new report to gh-pages
+        run: |
+          cp -r ${{ github.run_id }}/* .
 
       - name: Commit changes
         run: |
