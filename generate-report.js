@@ -2,6 +2,16 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+function runCommand(command) {
+  try {
+    execSync(command, { stdio: 'inherit' });
+  } catch (error) {
+    console.error(`Error executing command: ${command}`);
+    console.error(error.message);
+    process.exit(1);
+  }
+}
+
 // Generate a unique run ID (e.g., timestamp)
 const runId = new Date().toISOString().replace(/[:.]/g, '-');
 
@@ -15,23 +25,16 @@ fs.mkdirSync(resultsDir, { recursive: true });
 fs.mkdirSync(publicDir, { recursive: true });
 
 // Run Cypress tests and generate the report
-execSync(`cypress run --reporter-options "reportDir=${resultsDir}"`, {
-  stdio: 'inherit',
-});
+runCommand(`cypress run --reporter-options "reportDir=${resultsDir}"`);
 
 // Merge JSON reports
-execSync(`mochawesome-merge ${resultsDir}/*.json > ${jsonOutput}`, {
-  stdio: 'inherit',
-});
+runCommand(`mochawesome-merge ${resultsDir}/*.json > ${jsonOutput}`);
 
 // Generate HTML report
-execSync(
-  `marge ${jsonOutput} --reportDir ${publicDir} --assetsDir ${publicDir}/assets --reportPageTitle report.html`,
-  { stdio: 'inherit' }
-);
+runCommand(`marge ${jsonOutput} --reportDir ${publicDir} --assetsDir ${publicDir}/assets --reportPageTitle report.html`);
 
 // Copy videos
-execSync(`cp -r cypress/videos ${publicDir}/videos`, { stdio: 'inherit' });
+runCommand(`cp -r cypress/videos ${publicDir}/videos`);
 
 // Ensure the public directory for all reports exists
 const allReportsDir = path.join('public', 'all-reports');
@@ -40,4 +43,4 @@ if (!fs.existsSync(allReportsDir)) {
 }
 
 // Move the report directory to the all-reports directory
-execSync(`mv ${publicDir} ${allReportsDir}/`);
+runCommand(`mv ${publicDir} ${allReportsDir}/`);

@@ -23,6 +23,21 @@ jobs:
         run: npm run generate:report
         continue-on-error: true
 
+      - name: Set up Git
+        run: |
+          git config --global user.name 'Rahul Kundu'
+          git config --global user.email 'rahulkundu2016@gmail.com'
+
+      - name: Fetch existing gh-pages branch
+        run: |
+          git fetch origin gh-pages:gh-pages
+
+      - name: Copy reports to gh-pages
+        run: |
+          mkdir -p gh-pages
+          cp -r public/all-reports/* gh-pages/
+          cp -r gh-pages/* public/all-reports/
+
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
         with:
