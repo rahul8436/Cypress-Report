@@ -24,11 +24,11 @@ jobs:
         run: npm run test:chrome
         continue-on-error: true
 
-      - name: Copy test execution videos
-        run: |
-          mkdir -p ${{ github.run_id }}/videos
-          cp -r cypress/videos ${{ github.run_id }}/videos
-        continue-on-error: true
+      # - name: Copy test execution videos
+      #   run: |
+      #     mkdir -p ${{ github.run_id }}/videos
+      #     cp -r cypress/videos ${{ github.run_id }}/videos
+      #   continue-on-error: true
 
       - name: Merge test results into one
         run: npm run report:merge
