@@ -1,5 +1,4 @@
 name: Create Cypress report
-
 on:
   push:
     branches:
@@ -7,55 +6,31 @@ on:
   schedule:
     - cron: '0 8 1-31 * *'
   workflow_dispatch:
-
 jobs:
-  cypress-e2e-chrome81:
-    name: Run on Chrome 81
+  cypress-test-run:
+    name: Cypress Test
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: yarn install
-
+      - uses: actions/checkout@v2
+      - name: Install a project with a clean slate
+        run: |
+          yarn install
       - name: Run Cypress tests
         run: npm run test:chrome
         continue-on-error: true
-
-      # - name: Copy test execution videos
-      #   run: |
-      #     mkdir -p ${{ github.run_id }}/videos
-      #     cp -r cypress/videos ${{ github.run_id }}/videos
-      #   continue-on-error: true
-
+      - name: Copy test execution videos
+        run: |
+          mkdir public
+          cp -r cypress/videos public/videos
       - name: Merge test results into one
         run: npm run report:merge
-        continue-on-error: true
-
-      # Manually write the report:generate step with run_id
       - name: Generate HTML report
-        run: marge index.json --reportDir ${{ github.run_id }} --assetsDir ${{ github.run_id }}/assets --reportPageTitle index.html
-        continue-on-error: true
+        run: npm run report:generate
 
-      - name: Set up Git
-        run: |
-          git config --global user.name 'Rahul Kundu'
-          git config --global user.email 'rahulkundu2016@gmail.com'
-
-      - name: Fetch existing gh-pages branch
-        run: |
-          git fetch origin gh-pages:gh-pages
-          git checkout gh-pages || git checkout -b gh-pages
-
-      - name: Copy new report to gh-pages
-        run: |
-          find ${{ github.run_id }} -mindepth 1 -maxdepth 1 -exec cp -r {} . \;
-
-
-      - name: Commit changes
-        run: |
-          git add .
-          git commit -m "Add report for run ${{ github.run_id }}" || true
-          git push origin gh-pages || true
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'Rahul Kundu'
+          user_email: 'rahulkundu2016@gmail.com'
