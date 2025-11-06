@@ -1,36 +1,36 @@
-name: Create Cypress report
-on:
-  push:
-    branches:
-      - 'main'
-  schedule:
-    - cron: '0 8 1-31 * *'
-  workflow_dispatch:
-jobs:
-  cypress-test-run:
-    name: Cypress Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install a project with a clean slate
-        run: |
-          yarn install
-      - name: Run Cypress tests
-        run: npm run test:chrome
-        continue-on-error: true
-      - name: Copy test execution videos
-        run: |
-          mkdir public
-          cp -r cypress/videos public/videos
-      - name: Merge test results into one
-        run: npm run report:merge
-      - name: Generate HTML report
-        run: npm run report:generate
+# name: Create Cypress report
+# on:
+#   push:
+#     branches:
+#       - 'main'
+#   schedule:
+#     - cron: '0 8 1-31 * *'
+#   workflow_dispatch:
+# jobs:
+#   cypress-test-run:
+#     name: Cypress Test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Install a project with a clean slate
+#         run: |
+#           yarn install
+#       - name: Run Cypress tests
+#         run: npm run test:chrome
+#         continue-on-error: true
+#       - name: Copy test execution videos
+#         run: |
+#           mkdir public
+#           cp -r cypress/videos public/videos
+#       - name: Merge test results into one
+#         run: npm run report:merge
+#       - name: Generate HTML report
+#         run: npm run report:generate
 
-      - name: Deploy report page
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          user_name: 'Rahul Kundu'
-          user_email: 'rahulkundu2016@gmail.com'
+#       - name: Deploy report page
+#         uses: peaceiris/actions-gh-pages@v3
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           publish_dir: ./public
+#           user_name: 'Rahul Kundu'
+#           user_email: 'rahulkundu2016@gmail.com'
